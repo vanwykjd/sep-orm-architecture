@@ -1,0 +1,114 @@
+For each of these skills, write pseudo-code (like the post = Post.all.first example above) to demonstrate how your application might perform these tasks through an ORM. For each code sample, also write a corresponding SQL statement. 
+
+    - remove duplicates in a query response
+
+          ORM:
+              users = Comment.select(:user_id).distinct;
+              
+          SQL:
+              SELECT DISTINCT user_ID FROM comment;
+          
+          
+
+    - filter records using inequalities, pattern matching, ranges, and boolean logic
+
+          ORM:
+              posts = Post.where.not(user_id: 2);
+              
+          SQL:
+              SELECT * FROM post WHERE user_id != 2;    
+              
+              
+          ORM:
+              posts = Post.where('body LIKE ?', '%star%');
+              
+          SQL:
+              SELECT * FROM post WHERE body LIKE '%star%';
+          
+          
+          ORM:
+              comments = Comment.where(user_id: 2..4);
+              
+          SQL:
+              SELECT * FROM comment WHERE user_id BETWEEN 2 and 4;
+              
+              
+          ORM:
+              commented = Comment.where("user_id = ?", 2);
+                
+          SQL:
+              SELECT * FROM comment WHERE (comment.user_id = 2);
+              
+              
+              
+    - sort records in a particular order
+
+          ORM:
+              comments = Comment.where(user_id: :desc);
+              
+          SQL:
+              SELECT user_id FROM comment ORDER BY user_id DESC;
+
+
+
+    - limit the number of records returned
+
+          ORM:
+              users = User.last(2);
+              
+          SQL:
+              SELECT * FROM user ORDER BY user.id DESC LIMIT 2;
+
+
+
+    - group records into sections
+
+          ORM:
+              Comment.select("post_id, COUNT (user_id) AS number_of_comments").group("post_id");
+              
+          SQL:
+              SELECT post_id, COUNT (user_id) AS number_of_comments
+              FROM "comment"
+              GROUP BY post_id;
+
+
+
+    - perform calculations using aggregate functions
+
+          ORM:
+              Comment.select("post_id, COUNT (user_id) AS number_of_comments").group("post_id");
+              
+          SQL:
+              SELECT post_id, COUNT (user_id) AS number_of_comments
+              FROM "comment"
+              GROUP BY post_id;
+              
+              
+
+    - join tables using cross join, inner join, and outer join
+    
+          Cross: 
+              ORM:
+                  User.joins('CROSS JOIN comment ON user.id = comment.user_id').select('user.full_name, comment.body');
+            
+              SQL:
+                  SELECT user.full_name, comment.body FROM user
+                  CROSS JOIN comment ON comment.user_id = user.id;
+                  
+          Inner: 
+              ORM:
+                  User.joins(:comment);
+            
+              SQL:
+                  SELECT * FROM user
+                  INNER JOIN comment ON comment.user_id = user.id;
+                  
+          Outer:
+              ORM:
+                  User.left_outer_joins(:post).select('user.full_name, post.title');
+            
+              SQL:
+                  SELECT user.full_name, post.title FROM user 
+                  LEFT OUTER JOIN post ON user.id = post.user_id;
+          
+          
